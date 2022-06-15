@@ -1,123 +1,106 @@
-.TH HSH 1 "June 2022" Version(0.1) "SIMPLE SHELL MAN PAGE"
+B.\"Manpage for simple shell 
+
+.\"Created by Remi Oni and Tolulope Fakunle
+.TH HSH 1 "May 2022" "ALX Africa" "SHELL - Simple Shell man page"
+
 .SH NAME
-.PP
-.B hsh - Simple Shell
-.PP
+hsh\fR \- simple UNIX command interpreter
+
 .SH SYNOPSIS
-.PP
-.B ./hsh [command] [options]
-.PP
+soda\fR [\fIfilename\fR]
+
+.SH COPYRIGHT
+hsh is Copyright (C) 2022 by Remi Oni and Tolulope Fakunle
+
 .SH DESCRIPTION
-.PP
-.B The hsh (Simple Shell) is an end of semester project for students at Holberton School where we expore, understand and build a working functional simple shell program.
-.PP
-.B Overview
-.PP
-The simple shell is a simplified iteration of a command line interpreter, similar to
-.B bash or dash.
-.I FORMAT [ARGUMENT]...
-.PP
-.SH OPTIONS
-.PP
-.B Simple Shell operates in both
-.I interactive and
-.I non-interactive mode. The user may initiate
-.B simple shell and begin working or initate
-.B simple shell using commands meant to be run by the program.
-.PP
+hsh\fR is a sh-compatible command language interpreter that executes commands read from the standard input or from a file.
+
 .SH ARGUMENTS
-.PP
-The first argument, argument 0 is understood to be the command to be run by
-.B simple shell
-and arguments following as modifiers or options.
+If arguments remain after option processing, the first argument is assumed to be the name of a file containing shell commands. hsh reads and executes commands from this file, then exits. hsh exit status is the exit status of the last command executed in the script. If no commands are executed, the exit status is 0. An attempt is first made to open the file in the current directory, and, if no file is found, then the shell searches the directories in PATH for the script.
+
 .SH INVOCATION
-.B simple shell
-may be invoked with the same functionality in
-.I interactive
-or
-.I non-interactive
-mode.  The user may quit the program by typing "exit", "Ctrl + D", or "Ctrl + C" on the command line.
-When the program quits or a command has been executed,
-.B simple shell
-returns with a new prompt: "$ "
+Sodash is started with the standard input connected to the terminal (as determined by \fIisatty(3)\fR), the interactive mode is executed. Also non-interactively option can be executed.
+When Sodash is executed interactively, the prompt is displayed  \fI^-^ \fR to read any command, the command line argument is invoked and is treated as the first argument.
 
-.B Examples
-.IP
+.SH DEFINITIONS
+The following definitions are used throughout the rest of this document.
 
-$./hsh
+- \fIblank\fR
 
-$pwd
+A space or tab.
 
-/home/vagrant/simple_shell
+- \fIword\fR
 
-$
+A sequence of characters considered as a single unit by the shell. Also known as a token\fR.
 
-$/bin/pwd
+- \fIname\fR
 
-/home/vagrant/simple_shell
+A word consisting only of alphanumeric characters and underscores, and beginning with an alphabetic character or an underscore. Also referred to as an identifier\fR.
 
-$
+control operator\fR
+A token that performs a control function. It is one of the following symbols:
+|| & && ; ;;
 
+.SH Command Execution
+After a command has been split into words, if it results in a simple command and an optional list of arguments, the following actions are taken.
 
-$./hsh
+If the command name contains no slashes, the shell attempts to locate it. If there exists a shell function by that name, that function is invoked. If the name does not match a function, the shell searches for it in the list of shell builtins. If a match is found, that builtin is invoked.
 
-$ls
+If the name is neither a shell function nor a builtin, and contains no slashes, \hsg\fR searches each element of the \fIPATH\fR for a directory containing an executable file by that name. \fIhsh\fR uses a hash table to remember the full pathnames of executable files. A full search of the directories in \fIPATH\fR is performed only if the command is not found in the hash table. If the search is unsuccessful, the shell searches for a defined shell function named "command not found". If that function exists, it is invoked with the original command and the original command's arguments as its arguments, and the function's exit status becomes the exit status of the shell. If that function is not defined, the shell prints an error message and returns an exit status of 127.
 
-AUTHORS		      builtin_functions.c  compare_execute.c  hsh      main_shell.c	   README.md	    simple_shell.h
-auxiliar_functions.c  cases_functions.c    control_errors.c   LICENSE  man_1_simple_shell  read_tokenize.c
+If the search is successful, or if the command name contains one or more slashes, the shell executes the named program in a separate execution environment. Argument 0 is set to the name given, and the remaining arguments to the command are set to the arguments given, if any.
 
+.SH Environment
+\fBhsh\fR takes a copy from \fBBash\fR environment of the parent process where it was executed. The environment is an array of strings containing the variables in the format.
+When a program is invoked it is given an array of strings called the environment. This is a list of name-value pairs, of the form name=value.
 
-$
+The shell provides several ways to manipulate the environment. On invocation, the shell scans its own environment and creates a parameter for each name found, automatically marking it for export to child processes. Executed commands inherit the environment. The export and declare -x commands allow parameters and functions to be added to and deleted from the environment.
 
-$/bin/ls
+.SH Exit Status
+Sodash\fR exit status of an executed command is the value returned by the waitpid system call or equivalent function. A command which exits with a zero exit status has succeeded. An exit status of zero indicates success. A non-zero exit status indicates failure.
 
-AUTHORS		      builtin_functions.c  compare_execute.c  hsh      main_shell.c	   README.md	    simple_shell.h
-auxiliar_functions.c  cases_functions.c    control_errors.c   LICENSE  man_1_simple_shell  read_tokenize.c
+If a command is not found, the child process created to execute it returns a status of 127.
 
-$
-.PP
-.SH RESERVED WORDS
-.B exit:
-quits the program, exits the shell.
+All builtins return zero on success and one or two on incorrect usage (indicated by a corresponding error message).
 
-.B env:
-prints the environment variables
-.PP
-.SH FILES
-.PP
-.I simple_shell.h
-- In this header file all the necessary libraries and function prototypes are stored, as well as the environ.
-.PP
-.I main_shell.c
-- This file contains the main function of this shell, including the function in charge of handling signs.
-.PP
-.I read_tokenize.c
-- Contains the function that reads the line of the standard input and the tokenizer function as well, which return their result to the main.
-.PP
-.I compare_execute.c
-- In this file there is a function in charge of comparing if the tokens are built-in or belong to the PATH, executing them respectively.
-.PP
-.I cases_functions.c
-- Contains the semicolon function.
-.PP
-.I builtin_functions.c
-- Contains Built-in functions.
-.PP
-.I auxiliar_functions.c
-- Contains all the auxiliary functions that I need to carry out various processes.
-.PP
-.I control_errors.c
-- Contains the function in charge of the error outputs.
-.PP
-.SH BUGS
-.PP
+.SH BUILTINS
+The following builtin commands are supported:
+
+.B env
+
+- Print the current enviroment
+
+.B setenv [Variable] [Value]
+
+- Creates a new environment variab;e or modifies an existing one.
+
+.B unsetenv [Variable]
+
+- Removes an environmental variable.
+
+.B exit [Status]
+
+- Exit the shell
+
+.B cd [Directory]
+
+- Changes the current directory of the process to DIRECTORY.  If no argument is given, the command is interpreted as cd $HOME. If the argument - is given, the command is interpreted as cd $OLDPWD. The environment variables PWD and OLDPWD are updated after a change of directory.
+
+.B help
+
+- Print help message of builtin command
+
+.SH SEE ALSO
+access(2), chdir(2), execve(2), _exit(2), exit(3), fflush(3), fork(2), free(3), isatty(3), getcwd(3), malloc(3), open(2), read(2), sh(1), signal(2), stat(2), wait(2), write(2)
+Sodash\fR takes basic functionality of the \fBsh\fR shell. This man page is based on the man page bash(1)
+
 .B Simple Shell:
-.PP
+
 https://github.com/WawiD1435/simple_shell
-.PP
+
 .SH AUTHORS
 Written by:
-.PP
+
 -Kinfeurael Wubishet
-.PP
+
 -Mohammed Saddo
